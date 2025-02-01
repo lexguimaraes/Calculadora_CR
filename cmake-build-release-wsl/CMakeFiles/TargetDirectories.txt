@@ -1,0 +1,3 @@
+/mnt/c/Users/alexf/CLionProjects/testearqbin/cmake-build-release-wsl/CMakeFiles/testearqbin.dir
+/mnt/c/Users/alexf/CLionProjects/testearqbin/cmake-build-release-wsl/CMakeFiles/edit_cache.dir
+/mnt/c/Users/alexf/CLionProjects/testearqbin/cmake-build-release-wsl/CMakeFiles/rebuild_cache.dir
