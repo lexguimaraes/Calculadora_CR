@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+int calcular_cr(char* nome);
 
 void bin2txt(char* nome,char* saida){
     FILE* arq = fopen(nome, "rb");
+    if(!arq)exit(1);
     int tam;
     fread(&tam,sizeof(int),1,arq);
     int *notas = malloc((sizeof(int)*tam)+1);
@@ -15,6 +18,7 @@ void bin2txt(char* nome,char* saida){
     for(int i = 0; i < tam; i+=2){
         fprintf(arq,"%d.  NOTA: %d   CARGA HORARIA: %d\n",i/2,notas[i+1],notas[i+2]);
     }
+    fprintf(arq,"CR : %d\n",calcular_cr(nome));
     fclose(arq);
     free(notas);
 }
@@ -23,6 +27,7 @@ void bin2txt(char* nome,char* saida){
 
 int* ler_arquivo(char* nome){
     FILE* arq = fopen(nome, "rb");
+    if(!arq)exit(1);
     int tam;
     fread(&tam,sizeof(int),1,arq);
     int *notas = malloc((sizeof(int)*tam)+1);
@@ -39,20 +44,12 @@ void print_arquivo(char* nome){
     for(int i = 0; i < tam; i+=2){
         printf("%d.  NOTA: %d   CARGA HORARIA: %d\n",i/2,notas[i+1],notas[i+2]);
     }
+    puts("");
     free(notas);
 }
 
 void escreve_arquivo(char *nome){
-    puts("ESCREVENDO???");
-    char c;
-    scanf(" %c",&c);
-    if(c != 's' && c!= 'S'){
-        return;
-    }
-    FILE* arq = fopen(nome, "rb+");
-    if(!arq){
-        arq = fopen(nome, "wb");
-    }
+    FILE* arq = fopen(nome, "wb");
     int nota,ch,size;
     fseek(arq, 0,SEEK_END);
     puts("N DE MATERIAS");
@@ -77,6 +74,7 @@ void add_nota(char* nome){
     }
     int t;
     FILE* arq = fopen(nome,"rb+");
+    if(!arq)exit(1);
     fread(&t, sizeof(int),1,arq);
     t+= size*2;
     fseek(arq, 0,SEEK_SET);
@@ -93,12 +91,13 @@ void add_nota(char* nome){
 }
 
 void inicializa_arq(char* nome){
-    puts("ZERAR ARQUIVO???");
+    puts("Arquivo novo ou deseja zerar um arquivo existente?");
     char c;
     scanf("%c",&c);
     if(c == 's' || c == 'S'){
         FILE* arq = fopen(nome, "wb");
         fclose(arq);
+        escreve_arquivo(nome);
     }
 }
 
@@ -119,16 +118,13 @@ int calcular_cr(char* nome){
 }
 
 void remove_nota(char* nome){
-    puts("remover nota???");
-    char c;
-    scanf(" %c",&c);
-    if (c != 's' && c != 'S')return;
     while(1){
         print_arquivo(nome);
         int indice;
         puts("QUAL INDICE???");
         scanf("%d", &indice);
         FILE* arq = fopen(nome, "rb+");
+        if(!arq)exit(1);
         int size;
         fread(&size,sizeof(int),1,arq);
         if (size/2 <= indice || indice < 0){
@@ -154,12 +150,34 @@ void remove_nota(char* nome){
     }
 }
 int main(void) {
-    char baeta[10] = "testelemos";
-    inicializa_arq(baeta);
-    escreve_arquivo(baeta);
-    add_nota(baeta);
-    remove_nota(baeta);
-    bin2txt(baeta,"lemos.txt");
-    printf("CR: %d", calcular_cr(baeta));
+    char buff[20];
+    char buff2[20];
+    printf("Digite o nome do arquivo binario a ser criado, ou lido\n");
+    scanf("%16[^\n]%*c",buff);
+    strcpy(buff2,buff);
+    strcat(buff2,".txt");
+    strcat(buff, ".bin");
+    inicializa_arq(buff);
+    while(1){
+        int opcao;
+        printf("[1] - Adicionar notas\n[2] - Remover notas\n[3] - Listar notas\n[4] - Sair\n");
+        scanf("%d", &opcao);
+        switch(opcao){
+            case 1:
+                add_nota(buff);
+                break;
+            case 2:
+                remove_nota(buff);
+                break;
+            case 3:
+                print_arquivo(buff);
+                break;
+            default:
+                break;
+        }
+        if(opcao == 4)break;
+    }
+    bin2txt(buff,buff2);
+    printf("CR: %d", calcular_cr(buff));
     return 0;
 }
