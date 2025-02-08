@@ -44,6 +44,7 @@ void print_arquivo(char* nome){
     for(int i = 0; i < tam; i+=2){
         printf("%d.  NOTA: %d   CARGA HORARIA: %d\n",i/2,notas[i+1],notas[i+2]);
     }
+    printf("CR : %d",calcular_cr(nome));
     puts("");
     free(notas);
 }
@@ -66,10 +67,10 @@ void escreve_arquivo(char *nome){
 }
 
 void add_nota(char* nome){
-    puts("N DE MATERIAS NOVAS");
+    puts("N DE MATERIAS NOVAS, NO MÁXIMO 20 DE UMA VEZ");
     int size;
     scanf("%d",&size);
-    if (size<=0){
+    if (size<=0 || size > 20){
         return;
     }
     int t;
