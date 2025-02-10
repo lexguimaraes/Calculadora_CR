@@ -44,8 +44,6 @@ void print_arquivo(char* nome){
     for(int i = 0; i < tam; i+=2){
         printf("%d.  NOTA: %d   CARGA HORARIA: %d\n",i/2,notas[i+1],notas[i+2]);
     }
-    printf("CR : %d",calcular_cr(nome));
-    puts("");
     free(notas);
 }
 
@@ -94,7 +92,7 @@ void add_nota(char* nome){
 void inicializa_arq(char* nome){
     puts("Arquivo novo ou deseja zerar um arquivo existente?");
     char c;
-    scanf("%c",&c);
+    scanf(" %c",&c);
     if(c == 's' || c == 'S'){
         FILE* arq = fopen(nome, "wb");
         fclose(arq);
@@ -171,7 +169,8 @@ int main(void) {
                 remove_nota(buff);
                 break;
             case 3:
-                print_arquivo(buff);
+                printf("CR: %d\n\n", calcular_cr(buff));
+                //print_arquivo(buff);
                 break;
             default:
                 break;
@@ -179,6 +178,6 @@ int main(void) {
         if(opcao == 4)break;
     }
     bin2txt(buff,buff2);
-    printf("CR: %d", calcular_cr(buff));
+    printf("CR: %d\n", calcular_cr(buff));
     return 0;
 }
