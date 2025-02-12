@@ -3,20 +3,77 @@
 #include <string.h>
 int calcular_cr(char* nome);
 
+int pai(int ind){
+    if(ind>0)return ind-1/2;
+    return -1;
+}
+
+int esq(int ind){
+    return ind*2+1;
+}
+
+int dir(int ind){
+    return esq(ind)+1;
+}
+
+void max_heapify(int* v, int n, int ind){
+    int e = esq(ind);
+    int d = dir(ind);
+    int maior = ind;
+    if(e < n && v[e]>v[ind])maior = e;
+    if(d < n && v[d]>v[maior])maior = d;
+    if(maior != ind){
+        int temp = v[maior];
+        v[maior] = v[ind];
+        v[ind] = temp;
+        max_heapify(v, n, maior);
+    }
+}
+
+void build_maxheap(int*v, int n){
+    int ult_pai = pai(n-1);
+    for(int i = ult_pai;i>=0;i--){
+        max_heapify(v,n,i);
+    }
+}
+
+void heap_sort(int *v, int n){
+    build_maxheap(v, n);
+    for(int i = n-1;i>0;i--){
+        int temp = v[i];
+        v[i] = v[0];
+        v[0] = temp;
+        max_heapify(v, i, 0);
+    }
+}
+
+
+
+
+
 void bin2txt(char* nome,char* saida){
     FILE* arq = fopen(nome, "rb");
     if(!arq)exit(1);
     int tam;
     fread(&tam,sizeof(int),1,arq);
-    int *notas = malloc((sizeof(int)*tam)+1);
-    notas[0] = tam;
+    int *notas = malloc((sizeof(int)*tam));
     for(int i = 0; i < tam; i++){
-        fread(&notas[i+1],sizeof(int),1,arq);
+        fread(&notas[i],sizeof(int),1,arq);
     }
     fclose(arq);
+    int notas_ord[tam];
+    int ind = 0;
+    for(int i = 0; i < tam; i++){
+        notas_ord[i] = notas[ind];
+        ind+=2;
+    }
+    heap_sort(notas_ord,tam/2);
     arq = fopen(saida, "wb");
-    for(int i = 0; i < tam; i+=2){
-        fprintf(arq,"%d.  NOTA: %d   CARGA HORARIA: %d\n",i/2,notas[i+1],notas[i+2]);
+    for(int j = 0;j<tam/2;j++){
+            for(int i = 0; i < tam; i+=2){
+                if(notas_ord[j] == notas[i])
+                    fprintf(arq,"%d.  NOTA: %d   CARGA HORARIA: %d\n",j,notas[i],notas[i+1]);
+            }
     }
     fprintf(arq,"CR : %d\n",calcular_cr(nome));
     fclose(arq);
