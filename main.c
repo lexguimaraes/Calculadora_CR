@@ -47,6 +47,12 @@ void heap_sort(int *v, int n){
     }
 }
 
+int in_vet(const int* vet,int n,int k,int o){
+    for(int i = 0;i<n;i+=2){
+        if(vet[i] == k && vet[i+1] == o)return 1;
+    }
+    return 0;
+}
 
 
 
@@ -69,10 +75,19 @@ void bin2txt(char* nome,char* saida){
     }
     heap_sort(notas_ord,tam/2);
     arq = fopen(saida, "wb");
+    int ch_rep[tam];
+    int ch_ind=0;
     for(int j = 0;j<tam/2;j++){
             for(int i = 0; i < tam; i+=2){
-                if(notas_ord[j] == notas[i])
-                    fprintf(arq,"%d.  NOTA: %d   CARGA HORARIA: %d\n",j,notas[i],notas[i+1]);
+                if(notas_ord[j] == notas[i]) {
+                    if(!in_vet(ch_rep,ch_ind,notas[i],notas[i+1])){
+                        fprintf(arq, "%d.  NOTA: %d   CARGA HORARIA: %d\n", ch_ind/2, notas[i], notas[i + 1]);
+                        ch_rep[ch_ind] = notas[i];
+                        ch_ind++;
+                        ch_rep[ch_ind] = notas[i+1];
+                        ch_ind++;
+                    }
+                }
             }
     }
     fprintf(arq,"CR : %d\n",calcular_cr(nome));
